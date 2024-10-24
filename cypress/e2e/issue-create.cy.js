@@ -25,7 +25,7 @@ describe("Issue create", () => {
       // Open issue type dropdown and choose Story
       cy.get('[data-testid="select:type"]').click();
       cy.get('[data-testid="select-option:Story"]')
-        .wait(3000)
+        .wait(5000)
         .trigger("mouseover")
         .trigger("click");
       cy.get('[data-testid="icon:story"]').should("be.visible");
