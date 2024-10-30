@@ -153,7 +153,7 @@ describe("Issue create", () => {
     cy.get('[data-testid="icon:arrow-up"]').should("be.visible");
   });
 });
-it.only("Should create random data plugin issue and validate it successfully", () => {
+it("Should create random data plugin issue and validate it successfully", () => {
   const title = faker.lorem.words(4);
   const description = faker.lorem.sentences(2);
 
