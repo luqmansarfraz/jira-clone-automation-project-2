@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+
 describe("Issue create", () => {
   beforeEach(() => {
     cy.visit("/");
@@ -103,28 +104,37 @@ describe("Issue create", () => {
     });
   });
 
-  it("New-test custom issue creation and validate it successfully", () => {
+  it("Should create an custom issue and validate it successfully", () => {
     cy.get('[data-testid="modal:issue-create"]').within(() => {
+      // Adding description
       cy.get(".ql-editor").type("My bug description");
       cy.get(".ql-editor").should("have.text", "My bug description");
 
+      // Adding title
       cy.get('input[name="title"]').type("Bug");
       cy.get('input[name="title"]').should("have.value", "Bug");
 
+      // Selecting Issue type
       cy.get('[data-testid="select:type"]').click();
-      cy.get('[data-testid="select-option:bug"]')
-        .wait(2000)
+      cy.get('[data-testid="select-option:Bug"]')
+        .wait(1000)
         .trigger("mouseover")
         .trigger("click");
       cy.get('[data-testid="icon:bug"]').should("be.visible");
+
+      // Selecting Issue priority
+      cy.get('[data-testid="select:priority"]').click();
+      cy.get('[data-testid="select-option:Highest"]')
+        .wait(1000)
+        .trigger("mouseover")
+        .trigger("click");
+      cy.get('[data-testid="icon:arrow-up"]').should("be.visible");
 
       cy.get('[data-testid="select:reporterId"]').click();
       cy.get('[data-testid="select-option:Pickle Rick"]').click();
 
       cy.get('[data-testid="form-field:userIds"]').click();
       cy.get('[data-testid="select-option:Lord Gaben"]').click();
-      cy.get('[data-testid="select:priority"]').click();
-      cy.get('[data-testid="select-option:Highest"]').click();
 
       cy.get('button[type="submit"]').click();
     });
@@ -132,7 +142,6 @@ describe("Issue create", () => {
     cy.get('[data-testid="modal:issue-create"]').should("not.exist");
     cy.contains("Issue has been successfully created.").should("be.visible");
 
-    cy.reload();
     cy.contains("Issue has been successfully created.").should("not.exist");
 
     cy.get('[data-testid="board-list:backlog"]')
@@ -143,66 +152,75 @@ describe("Issue create", () => {
           .should("have.length", "5")
           .first()
           .find("p")
-          .contains(Bug)
+          .contains("Bug")
           .siblings()
           .within(() => {
             cy.get('[data-testid="avatar:Lord Gaben"]').should("be.visible");
-            cy.get('[data-testid="icon:Bug"]').should("be.visible");
+            cy.get('[data-testid="icon:bug"]').should("be.visible");
           });
       });
-    cy.get('[data-testid="icon:arrow-up"]').should("be.visible");
-  });
-});
-it("Should create random data plugin issue and validate it successfully", () => {
-  const title = faker.lorem.words(4);
-  const description = faker.lorem.sentences(2);
 
-  cy.get('[data-testid="modal:issue-create"]').within(() => {
-    cy.get(".ql-editor").type("description");
-    cy.get(".ql-editor").should("have.text", "description");
-
-    cy.get('input[name="title"]').type("title");
-    cy.get('input[name="title"]').should("have.value", "title");
-
-    cy.get('[data-testid="select:type"]').click();
-    cy.get('[data-testid="select-option:Task"]')
-      .wait(1000)
-      .trigger("mouseover")
-      .trigger("click");
-    cy.get('[data-testid="icon:Task"]').should("be.visible");
-
-    cy.get('[data-testid="select:reporterId"]').click();
-    cy.get('[data-testid="select-option:Baby Yoda"]').click();
-    cy.get('[data-testid="select:priority"]').click();
-    cy.get('[data-testid="select-option:"low"]').click();
-
-    cy.get('button[type="submit"]').click();
+    cy.get('[data-testid="board-list:backlog"]')
+      .contains("Bug")
+      .within(() => {
+        cy.get('[data-testid="avatar:Lord Gaben"]').should("be.visible");
+        cy.get('[data-testid="icon:bug"]').should("be.visible");
+      });
   });
 
-  cy.get('[data-testid="modal:issue-create"]').should("not.exist");
-  cy.contains("Issue has been successfully created.").should("be.visible");
+  it("Should create an issue with random data plugin and validate it successfully", () => {
+    const title = faker.lorem.word(5);
+    const description = faker.lorem.sentences(2);
+    cy.get('[data-testid="modal:issue-create"]').within(() => {
+      // Adding description
+      cy.get(".ql-editor").type(description);
+      cy.get(".ql-editor").should("have.text", description);
 
-  cy.reload();
-  cy.contains("Issue has been successfully created.").should("not.exist");
+      // Adding title
+      cy.get('input[name="title"]').type(title);
+      cy.get('input[name="title"]').should("have.value", title);
 
-  cy.get('[data-testid="board-list:backlog"]')
-    .should("be.visible")
-    .and("have.length", "1")
-    .within(() => {
-      cy.get('[data-testid="list-issue"]')
-        .should("have.length", "5")
-        .first()
-        .find("p")
-        .contains("title")
-        .siblings()
-        .within(() => {
-          cy.get('[data-testid="icon:task"]').should("be.visible");
-        });
-    });
-
-  cy.get('[data-testid="board-list:backlog"]')
-    .contains("title")
-    .within(() => {
+      // Make sure Issue type "Task" is selected
       cy.get('[data-testid="icon:task"]').should("be.visible");
+
+      // Selecting Issue priority
+      cy.get('[data-testid="select:priority"]').click();
+      cy.get('[data-testid="select-option:Low"]')
+        .wait(1000)
+        .trigger("mouseover")
+        .trigger("click");
+      cy.get('[data-testid="icon:arrow-down"]').should("be.visible");
+
+      cy.get('[data-testid="select:reporterId"]').click();
+      cy.get('[data-testid="select-option:Baby Yoda"]').click();
+
+      cy.get('button[type="submit"]').click();
     });
+
+    cy.get('[data-testid="modal:issue-create"]').should("not.exist");
+    cy.contains("Issue has been successfully created.").should("be.visible");
+
+    cy.contains("Issue has been successfully created.").should("not.exist");
+
+    cy.get('[data-testid="board-list:backlog"]')
+      .should("be.visible")
+      .and("have.length", "1")
+      .within(() => {
+        cy.get('[data-testid="list-issue"]')
+          .should("have.length", "5")
+          .first()
+          .find("p")
+          .contains(title)
+          .siblings()
+          .within(() => {
+            cy.get('[data-testid="icon:task"]').should("be.visible");
+          });
+      });
+
+    cy.get('[data-testid="board-list:backlog"]')
+      .contains(title)
+      .within(() => {
+        cy.get('[data-testid="icon:task"]').should("be.visible");
+      });
+  });
 });
