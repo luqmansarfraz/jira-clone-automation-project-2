@@ -1,5 +1,7 @@
 # Jira Clone tests
 
+# Test branch commits
+
 ## Installation
 
 Requires [Node.js](https://nodejs.org/) v14+ to run.
@@ -21,5 +23,5 @@ npx cypress run --browser=chrome
 ```
 
 ## Observe test run results in CI
-[![N|BuildStatus](https://iili.io/QOkZWQ.png)](https://freeimage.host/i/QOkZWQ)
 
+[![N|BuildStatus](https://iili.io/QOkZWQ.png)](https://freeimage.host/i/QOkZWQ)
