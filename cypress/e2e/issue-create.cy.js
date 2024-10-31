@@ -75,7 +75,7 @@ describe("Issue create", () => {
     });
   });
 
-  it("Should create an custom issue and validate it successfully", () => {
+  it("Should create an custom issue with given data and validate it successfully", () => {
     cy.get('[data-testid="modal:issue-create"]').within(() => {
       // Adding description
       cy.get(".ql-editor").type("My bug description");
