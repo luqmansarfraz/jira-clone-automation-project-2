@@ -12,15 +12,6 @@ describe("Issue create", () => {
   });
 
   it("Should create an issue and validate it successfully", () => {
-    // System finds modal for creating issue and does next steps inside of it
-    cy.get('[data-testid="modal:issue-create"]').within(() => {
-      // Type value to description input field
-      cy.get(".ql-editor").type("TEST_DESCRIPTION");
-      cy.get(".ql-editor").should("have.text", "TEST_DESCRIPTION");
-
-      // Type value to title input field
-      // Order of filling in the fields is first description, then title on purpose
-      // Otherwise filling title first sometimes doesn't work due to web page implementation
     cy.get('[data-testid="modal:issue-create"]').within(() => {
       cy.get(".ql-editor").type("TEST_DESCRIPTION");
       cy.get(".ql-editor").should("have.text", "TEST_DESCRIPTION");
@@ -30,7 +21,6 @@ describe("Issue create", () => {
 
       cy.get('[data-testid="select:type"]').click();
       cy.get('[data-testid="select-option:Story"]')
-        .wait(5000)
         .wait(1000)
         .trigger("mouseover")
         .trigger("click");
@@ -43,17 +33,7 @@ describe("Issue create", () => {
       cy.get('[data-testid="select-option:Pickle Rick"]').click();
 
       cy.get('button[type="submit"]').click();
-      cy.wait(30000);
-      // Assert that modal window is closed and successful message is visible
-      cy.get('[data-testid="modal:issue-create"]').should("not.exist");
-      cy.contains("Issue has been successfully created.").should("be.visible");
-      cy.wait(30000);
     });
-    // Reload the page to be able to see recently created issue
-    // Assert that successful message has dissappeared after the reload
-    cy.reload();
-    cy.contains("Issue has been successfully created.").should("not.exist");
-    cy.wait(50000);
 
     cy.get('[data-testid="modal:issue-create"]').should("not.exist");
     cy.contains("Issue has been successfully created.").should("be.visible");
@@ -61,11 +41,6 @@ describe("Issue create", () => {
     cy.contains("Issue has been successfully created.").should("not.exist");
 
     cy.get('[data-testid="board-list:backlog"]')
-      .should("to.be.visible")
-      .and("have.length", "1")
-      .within(() => {
-        // Assert that this list contains 5 issues and first element with tag p has specified text
-        cy.get('[data-testid="board-list:backlog"]')
       .should("be.visible")
       .and("have.length", "1")
       .within(() => {
@@ -76,7 +51,6 @@ describe("Issue create", () => {
           .contains("TEST_TITLE")
           .siblings()
           .within(() => {
-            //Assert that correct avatar and type icon are visible
             cy.get('[data-testid="avatar:Pickle Rick"]').should("be.visible");
             cy.get('[data-testid="icon:story"]').should("be.visible");
           });
@@ -85,18 +59,15 @@ describe("Issue create", () => {
     cy.get('[data-testid="board-list:backlog"]')
       .contains("TEST_TITLE")
       .within(() => {
-        // Assert that correct avatar and type icon are visible
         cy.get('[data-testid="avatar:Pickle Rick"]').should("be.visible");
         cy.get('[data-testid="icon:story"]').should("be.visible");
       });
   });
 
   it("Should validate title is required field if missing", () => {
-    // System finds modal for creating issue and does next steps inside of it
     cy.get('[data-testid="modal:issue-create"]').within(() => {
       cy.get('button[type="submit"]').click();
 
-      // Assert that correct error message is visible
       cy.get('[data-testid="form-field:title"]').should(
         "contain",
         "This field is required"
