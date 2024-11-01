@@ -6,37 +6,49 @@ describe("test suite for delete function", () => {
       .then(() => {
         cy.contains("This is an issue of type: Task.")
           .click()
-          .then(() => {
-            getIssueDetailsModal().should("be.visible");
-          });
+          .then(() => {});
       });
   });
 
   it("Test case for issue deletion", () => {
-    getIssueDetailsModal().within(() => {
-      cy.get("Delete Icon").should("be.visible").click();
+    getIssueDetailsModal().should("be.visible");
+    cy.get('[data-testid="icon:trash"]').should("be.visible").click();
+    cy.get('[data-testid="modal:confirm"]').should("be.visible");
+    cy.get('[data-testid="modal:confirm"]').within(() => {
+      cy.contains("Delete issue").click();
     });
+    cy.get('[data-testid="modal:confirm"]').should("not.exist");
+    getIssueDetailsModal().should("not.exist");
+    cy.reload();
 
-    cy.get('[data-testid="confirm:modal"]')
-      .should("be.visibile")
-      .within(() => {
-        cy.get("confirm_button").should("be.visible").click();
-      });
-
-    cy.get('[data-testid="confirm:modal"]').shouldnot("be.visible");
-    getIssueDetailsModal().shouldnot("be.visible");
-
-    // Reload?
-
+    cy.get("Issue has been successfully deleted").should("not.exist");
     cy.get('[data-testid="board-list:backlog"]')
       .should("be.visible")
       .and("have.length", "1")
       .within(() => {
         cy.get('[data-testid="list-issue"]').should("have.length", "3");
-        cy.doesntcontain("This is an issue of type: Task.");
+        cy.contains("This is an issue of type: Task.").should("not.exist");
       });
   });
 
-  const getIssueDetailsModal = () =>
-    cy.get('[data-testid="modal:issue-details"]');
+  it("Issue deletion cancelation ", () => {
+    getIssueDetailsModal().should("be.visible");
+    cy.get('[data-testid="icon:trash"]').should("be.visible").click();
+    cy.get('[data-testid="modal:confirm"]').should("be.visible");
+    cy.get('[data-testid="modal:confirm"]').within(() => {
+      cy.contains("Cancel").click();
+    });
+    cy.get('[data-testid="modal:confirm"]').should("not.exist");
+    cy.get('[data-testid="modal:issue-details"]')
+      .should("be.visible")
+      .within(() => {
+        cy.get('[data-testid="icon:close"]').first().click();
+      });
+    cy.get("Issue has not been deleted").should("not.exist");
+    cy.get('[data-testid="board-list:backlog"]').should("be.visible");
+    cy.contains("This is an issue of type: Task.").should("exist");
+  });
 });
+
+const getIssueDetailsModal = () =>
+  cy.get('[data-testid="modal:issue-details"]');
