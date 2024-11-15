@@ -5,8 +5,8 @@ describe("time tracking issue  adding,editing and removing suite", () => {
     issueTimeTrackingPom.beforeEachHandler();
   });
   it("Should add estimate time, edit it, and remove it successfully", () => {
-    const addTime = "4"; // Time to add initially
-    const editTime = "6"; // Time to add after editing
+    const addTime = "6"; // Time to add initially
+    const editTime = "8"; // Time to add after editing
 
     issueTimeTrackingPom.getIssueDetailModal().within(() => {
       // Retrieve the existing value if present
